@@ -25,12 +25,16 @@ export const Table = styled.table<any>`
 
   td {
     padding: ${spacing.big} ${spacing.small} ${spacing.big} ${spacing.small};
+    overflow-wrap: break-word;
+    max-width: 25vw;
   }
 
   ${(props: any) => props.viewOnly
     && css`
-      td:nth-of-type(5) {
-        display: none;
+      td:nth-of-type(1) {
+        p:nth-of-type(1) {
+          display: none;
+        }
       }
 
       th:nth-of-type(4) {
@@ -43,7 +47,7 @@ export const Table = styled.table<any>`
     `};
 `;
 
-export const ToolBar = styled.div`
+export const ToolBar = styled.div<any>`
   display: flex;
   justify-content: center;
   gap: ${spacing.small};
@@ -53,6 +57,12 @@ export const ToolBar = styled.div`
     flex-direction: column;
     align-items: center;
   }
+
+  ${(props: any) => props.viewOnly && css`
+    display: none;
+  `}
+
+
 `;
 
 export const TableFront = styled.td`

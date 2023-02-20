@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 /* eslint-disable react/jsx-props-no-spreading */
 import { ReactElement } from "react";
 import { useForm } from "react-hook-form";
@@ -41,7 +40,12 @@ const AccountPage = (): ReactElement => {
       email: data.email || currentUser.email,
     };
 
-    const response = await dispatch(updateUser(currentUser.token, currentUser.info.id, updatedUser));
+    const response = await dispatch(updateUser(
+      currentUser.token,
+      currentUser.info.id,
+      updatedUser,
+    ));
+
     if (response === "email not unique") {
       setErrorInfo("email", {
         type: "manual",

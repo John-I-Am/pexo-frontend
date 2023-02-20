@@ -1,23 +1,14 @@
-/* eslint-disable no-unused-vars */
 import styled, { css } from "styled-components";
-import {
-  device, fonts, fontWeights, secondaryColor, SHADOW, spacing,
-} from "../../sharedStyles";
+import { fonts, spacing } from "../../sharedStyles";
 
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: space-evenly;
   align-items: center;
-  gap: 20px;
-  width: 80%;
+  gap: ${spacing.big};
   height: 100%;
-  position: relative;
-
-
-  @media ${device.mobileL} {
-
-  }
+  width: 80%;
 `;
 
 export const GuessForm = styled.form<any>`
@@ -25,7 +16,7 @@ export const GuessForm = styled.form<any>`
     border: none;
     border-bottom: 2px solid grey;
     text-align: center;
-    font-size: ${spacing.biggest};
+    font-size: 7vw;
     border-radius: ${spacing.smaller};
 
     ${(props: any) => props.isCorrect === "correct"
@@ -44,20 +35,19 @@ export const GuessForm = styled.form<any>`
 `;
 
 export const CardFront = styled.div<any>`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow-wrap: break-word;
-    overflow: scroll;
-    font-family: ${fonts.text};
-    font-size: 3vw;
+  display: inline-block;
+  word-break: break-word; 
+  overflow-wrap: break-word;
+  font-family: ${fonts.text};
+  font-size: 3vw;
 `;
 
 export const CardBack = styled.div<any>`
-  text-align: center;
-  overflow: scroll;
+  display: inline-block;
+  word-break: break-word;
+  overflow-wrap: break-word;
   font-family: ${fonts.text};
   font-size: 3vw;
 
-  ${(props: any) => props.blur && css`filter: blur(5px);`}
+  ${(props: any) => props.blur && css`filter: blur(7px);`}
 `;

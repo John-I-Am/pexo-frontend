@@ -1,6 +1,4 @@
 /* eslint-disable no-nested-ternary */
-/* eslint-disable no-unused-vars */
-/* eslint-disable jsx-a11y/media-has-caption */
 import { ActionIcon, Button } from "@mantine/core";
 import { ReactElement } from "react";
 import speaker from "../../assets/audio.svg";

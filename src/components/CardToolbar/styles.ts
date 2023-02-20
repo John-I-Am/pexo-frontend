@@ -8,11 +8,10 @@ export const Container: any = styled.div`
   justify-content: space-evenly;
   align-items: center;
   width: 100%;
-  border: 0.5px grey solid;
   overflow: scroll;
   border-radius: ${spacing.small};
   font-size: ${spacing.default};
   font-weight: 900;
   color: ${secondaryColor.lighter};
-  background: ${primaryColor.darker};
+  background: ${primaryColor.default};
 `;

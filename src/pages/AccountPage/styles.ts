@@ -8,6 +8,7 @@ export const Container = styled.div`
   width: 100%;
   padding: ${spacing.smaller};
   overflow: hidden;
+  margin-top: ${spacing.default};
 
   hr {
     border-top: 0.5px solid grey;    

@@ -1,10 +1,9 @@
 /* eslint-disable no-param-reassign */
-/* eslint-disable no-unused-vars */
 import { Button, Modal } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
 import { useState } from "react";
 import {
-  useAppDispatch, useAppSelector, useCardsDue, useCombinedDeck, useTagSelector,
+  useAppDispatch, useAppSelector,
 } from "../../hooks/hooks";
 import { createCard, createDeck } from "../../reducers/deckReducer";
 import CardList from "../CardList/CardList";
@@ -14,7 +13,6 @@ const Deck = ({ cards }: any) => {
   const dispatch = useAppDispatch();
   const token: string = useAppSelector((state: any) => state.user?.token);
   const [opened, setOpened] = useState(false);
-  const deckTitle = "alphabet";
 
   const handleAddDeck = async () => {
     const deck: any = await dispatch(createDeck(token));

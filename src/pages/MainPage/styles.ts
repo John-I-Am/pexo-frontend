@@ -1,6 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import styled from "styled-components";
-import { device } from "../../sharedStyles";
+import { device, spacing } from "../../sharedStyles";
 
 export const Container = styled.div`
   display: flex;
@@ -21,7 +21,9 @@ export const Container = styled.div`
 
     .expand-drawer {
       display: inline-block;
-      position: fixed;
+      position: absolute;
+      left: ${spacing.default};
+      top: ${spacing.smaller};
     }
   }
 `;

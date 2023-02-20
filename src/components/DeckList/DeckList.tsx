@@ -10,6 +10,7 @@ import {
 } from "../../hooks/hooks";
 import { createDeck, setActive } from "../../reducers/deckReducer";
 import { Deck } from "../../types";
+import { SearchBar } from "../../sharedStyles";
 
 type DeckListProps = {
   noCreate: boolean;
@@ -31,17 +32,17 @@ const DeckList = ({ noCreate }: DeckListProps): ReactElement => {
     <Container>
       <DeckSelector noCreate={noCreate} active={activeDeck.title}>
         <form onChange={({ target }) => setFilter((target as HTMLInputElement).value)}>
-          <input placeholder="Search Deck..." />
+          <SearchBar placeholder="Search" />
         </form>
-
-        <Button onClick={() => dispatch(setActive(useCombinedDeck(decks)))}> All Cards</Button>
-        <Button onClick={() => dispatch(createDeck(token))}> Create Deck</Button>
-
-        {decksToShow.map((deck: any) => (
-          <Button variant="outline" key={deck.id} onClick={() => dispatch(setActive(deck))}>
-            <p>{deck.title}</p>
-          </Button>
-        ))}
+        <Button onClick={() => dispatch(setActive(useCombinedDeck(decks)))}> All</Button>
+        <Button onClick={() => dispatch(createDeck(token))}> New </Button>
+        <div>
+          {decksToShow.map((deck: any) => (
+            <Button variant="outline" key={deck.id} onClick={() => dispatch(setActive(deck))}>
+              <p>{deck.title}</p>
+            </Button>
+          ))}
+        </div>
       </DeckSelector>
 
       <Tags>

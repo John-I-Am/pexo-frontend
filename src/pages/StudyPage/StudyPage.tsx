@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { ReactElement, useState } from "react";
 import { useAppSelector, useCardsDue } from "../../hooks/hooks";
 import CardComponent from "../../components/Card/Card";

@@ -55,7 +55,6 @@ const CardList = ({ cards, viewOnly }: any): ReactElement => {
             <th>Front</th>
             <th>Back</th>
             <th>Next Review</th>
-            <th> </th>
           </tr>
         </thead>
 
@@ -65,18 +64,7 @@ const CardList = ({ cards, viewOnly }: any): ReactElement => {
               <td>
                 <p>{`Level: ${card.level}`}</p>
                 <p>{`Type: ${card.type}`}</p>
-              </td>
-              <td>
-                { card.front }
-              </td>
-              <td>
-                { card.back }
-              </td>
-              <td>
-                {renderDate(card.checkpointDate)}
-              </td>
-              <td>
-                <ToolBar>
+                <ToolBar viewOnly={viewOnly}>
                   <div>
                     <ActionIcon onClick={() => handleDeleteCard(card)}><Delete /></ActionIcon>
                     <p>Delete</p>
@@ -86,6 +74,15 @@ const CardList = ({ cards, viewOnly }: any): ReactElement => {
                     <p>Edit</p>
                   </div>
                 </ToolBar>
+              </td>
+              <td>
+                { card.front }
+              </td>
+              <td>
+                { card.back }
+              </td>
+              <td>
+                {renderDate(card.checkpointDate)}
               </td>
             </tr>
           ))}

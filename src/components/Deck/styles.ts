@@ -1,10 +1,9 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable import/prefer-default-export */
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import {
   fonts,
   greyColor,
-  primaryColor, secondaryColor, SHADOW, spacing,
+  primaryColor, SHADOW, spacing,
 } from "../../sharedStyles";
 
 export const Container: any = styled.div`

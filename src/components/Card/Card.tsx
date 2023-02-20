@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-props-no-spreading */
 import { ReactElement, useState } from "react";
 import { useForm } from "react-hook-form";

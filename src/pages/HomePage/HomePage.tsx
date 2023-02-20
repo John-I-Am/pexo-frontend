@@ -160,7 +160,7 @@ const HomePage = (): ReactElement => {
       <Footer>
         <div>
           <img src={logo} alt="logo" />
-          <div>
+          {/* <div>
             <p>Link</p>
             <p>Link</p>
             <p>Link</p>
@@ -174,7 +174,7 @@ const HomePage = (): ReactElement => {
             <p>Link</p>
             <p>Link</p>
             <p>Link</p>
-          </div>
+          </div> */}
         </div>
         <div>
           <span>Terms & Conditions</span>
