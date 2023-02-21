@@ -5,7 +5,7 @@ import { Button } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
 import { useForm } from "react-hook-form";
 import { Input, Label, Error } from "../../sharedStyles";
-import { useAppDispatch } from "../../hooks/hooks";
+import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { Container, Header, Form } from "./styles";
 import { loginUser } from "../../reducers/usersReducer";
 
@@ -25,9 +25,11 @@ const LoginForm = (): ReactElement => {
     formState: { errors },
   } = useForm<FormValues>();
 
+  const userStatus: string = useAppSelector((state: any) => state.user?.status);
+
   const handleLogin = async (data: any): Promise<void> => {
-    const response: any = await dispatch(loginUser(data));
-    if (response === "invalid credentials") {
+    await dispatch(loginUser(data));
+    if (userStatus === "failed") {
       setError("password", {
         type: "manual",
         message: "Incorrect Login",

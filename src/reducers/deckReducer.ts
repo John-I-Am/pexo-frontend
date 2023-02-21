@@ -1,6 +1,5 @@
 /* eslint-disable no-param-reassign */
-/* eslint-disable consistent-return */
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import deckService from "../services/decks";
 import cardService from "../services/cards";
 import {
@@ -8,167 +7,137 @@ import {
 } from "../types";
 import { useCombinedDeck } from "../hooks/hooks";
 
-const deckSlice: any = createSlice({
+type SliceStatus = "idle" | "loading" | "succeeded" | "failed"
+
+interface DeckState {
+  allDecks: Deck[];
+  activeDeck: Deck;
+  status: SliceStatus;
+}
+
+export const fetchDecks = createAsyncThunk("decks/fetchDecks", async (token: string): Promise<Deck[]> => {
+  const response: Deck[] = await deckService.getAll(token);
+  return response;
+});
+
+export const createDeck = createAsyncThunk("decks/createDeck", async (token: string): Promise<Deck> => {
+  const response: Deck = await deckService.create(token);
+  return response;
+});
+
+export const updateDeck = createAsyncThunk("decks/updateDeck", async ({ token, updatedDeck }: {token: string, updatedDeck: Deck}): Promise<any> => {
+  const response: Deck = await deckService.update(token, updatedDeck);
+  return response;
+});
+
+export const deleteDeck = createAsyncThunk("decks/deleteDeck", async ({ token, deckToDelete }: {token: string, deckToDelete: Deck}): Promise<any> => {
+  const response = await deckService.update(token, deckToDelete);
+  return response;
+});
+
+export const createCard = createAsyncThunk("decks/createCard", async ({ token, newCard }: {token: string, newCard: NewCard}): Promise<any> => {
+  const response = await cardService.create(token, newCard);
+  return response;
+});
+
+export const updateCard = createAsyncThunk("decks/updateCard", async ({ token, updatedValues, cardId }: {token: string, updatedValues: any, cardId: any}): Promise<any> => {
+  const response = await cardService.update(token, updatedValues, cardId);
+  return response;
+});
+
+export const removeCard = createAsyncThunk("decks/removeCard", async ({ token, cardToDelete }: {token: string, cardToDelete: any}): Promise<any> => {
+  const response = await cardService.remove(token, cardToDelete);
+  return response;
+});
+
+const deckSlice = createSlice({
   name: "decks",
   initialState: {
-    allDecks: [],
-    activeDeck: { title: "", cards: [] },
-  },
+    allDecks: [] as Deck[],
+    activeDeck: { title: "", cards: [] as Card[] } as Deck,
+    status: "idle" as SliceStatus,
+  } as DeckState,
   reducers: {
-    initDeck(state: any, action: any) {
-      state.allDecks = action.payload;
-    },
-    addDeck(state: any, action: any) {
-      state.allDecks.push({ ...action.payload, cards: action.payload.cards || [] });
-    },
-    editDeck(state: any, action: any) {
-      state.allDecks = state.allDecks.map((deck: Deck) => (deck.id === action.payload.id
-        ? action.payload
-        : deck));
-
-      state.activeDeck = action.payload;
-    },
-    removeDeck(state: any, action: any) {
-      state.allDecks = state.allDecks.filter((deck: Deck) => (deck.id !== action.payload.id));
-
-      state.activeDeck = useCombinedDeck(state.allDecks);
-    },
     setActive(state: any, action: any) {
       state.activeDeck = { ...action.payload, cards: action.payload.cards || [] };
     },
-    addCard(state: any, action: any) {
-      if (state.activeDeck?.id === action.payload.deckId) {
-        state.activeDeck.cards.push(action.payload);
-      }
+  },
+  extraReducers(builder) {
+    builder
+      .addCase(fetchDecks.pending, (state: DeckState) => {
+        state.status = "loading";
+      })
+      .addCase(fetchDecks.fulfilled, (state: DeckState, action: PayloadAction<Deck[]>) => {
+        state.status = "succeeded";
+        state.allDecks = action.payload;
+      })
+      .addCase(createDeck.fulfilled, (state: DeckState, action: PayloadAction<Deck>) => {
+        state.allDecks.push(action.payload);
+        // temp solution for strange bug where cards disappear
+        const temp = action.payload;
+        temp.cards = [];
+        state.activeDeck = temp;
+      })
+      .addCase(updateDeck.fulfilled, (state: DeckState, action: PayloadAction<Deck>) => {
+        state.allDecks = state.allDecks.map((deck: Deck) => (deck.id === action.payload.id
+          ? action.payload
+          : deck));
 
-      state.allDecks.forEach((deck: any, id: any) => {
-        if (deck.id === action.payload.deckId) {
-          state.allDecks[id].cards.push(action.payload);
+        // temp solution for strange bug where cards disappear
+        const temp = action.payload;
+        temp.cards = [];
+        state.activeDeck = temp;
+      })
+      .addCase(deleteDeck.fulfilled, (state: DeckState, action: PayloadAction<Deck>) => {
+        state.allDecks = state.allDecks.filter((deck: Deck) => (deck.id !== action.payload.id));
+
+        state.activeDeck = useCombinedDeck(state.allDecks);
+      })
+      .addCase(deleteDeck.rejected, (state, action) => {
+        console.log("rferferf");
+        console.log(action.payload);
+      })
+      .addCase(createCard.fulfilled, (state: DeckState, action: PayloadAction<Card>) => {
+        if (state.activeDeck?.id === action.payload.deckId) {
+          state.activeDeck.cards?.push(action.payload);
         }
-      });
-    },
-    deleteCard(state: any, action: any) {
-      state.activeDeck.cards = state.activeDeck.cards.filter(
-        (card: Card) => card.id !== action.payload.id,
-      );
 
-      state.allDecks = state.allDecks.map(
-        (deck: Deck) => (deck.id === action.payload.deckId
-          ? { ...deck, cards: deck.cards?.filter((card: any) => card.id !== action.payload.id) }
-          : deck),
-      );
-    },
-    editCard(state: any, action: any) {
-      state.activeDeck.cards = state.activeDeck.cards.map(
-        (card: Card) => (card.id !== action.payload.id ? card : action.payload),
-      );
-
-      state.allDecks = state.allDecks.map(
-        (deck: Deck) => (deck.id === action.payload.deckId
-          ? {
-            ...deck,
-            cards: deck.cards?.map((card: Card) => (card.id === action.payload.id
-              ? action.payload
-              : card)),
+        state.allDecks.forEach((deck: any, id: any) => {
+          if (deck.id === action.payload.deckId) {
+            state.allDecks[id].cards?.push(action.payload);
           }
-          : deck),
-      );
-    },
+        });
+      })
+      .addCase(updateCard.fulfilled, (state: DeckState, action: PayloadAction<Card>) => {
+        state.activeDeck.cards = state.activeDeck.cards?.map(
+          (card: Card) => (card.id !== action.payload.id ? card : action.payload),
+        );
+
+        state.allDecks = state.allDecks.map(
+          (deck: Deck) => (deck.id === action.payload.deckId
+            ? {
+              ...deck,
+              cards: deck.cards?.map((card: Card) => (card.id === action.payload.id
+                ? action.payload
+                : card)),
+            }
+            : deck),
+        );
+      })
+      .addCase(removeCard.fulfilled, (state: DeckState, action: PayloadAction<Card>) => {
+        state.activeDeck.cards = state.activeDeck.cards?.filter(
+          (card: Card) => card.id !== action.payload.id,
+        );
+
+        state.allDecks = state.allDecks.map(
+          (deck: Deck) => (deck.id === action.payload.deckId
+            ? { ...deck, cards: deck.cards?.filter((card: any) => card.id !== action.payload.id) }
+            : deck),
+        );
+      });
   },
 });
 
-export const {
-  addDeck, initDeck, setActive, editDeck, removeDeck, addCard, deleteCard, editCard,
-} = deckSlice.actions;
-
-export const createDeck = (
-  token: string,
-) => async (dispatch: any): Promise<void> => {
-  try {
-    const response = await deckService.create(token);
-    dispatch(addDeck(response));
-    return response;
-  } catch (e: any) {
-    console.log(e);
-    return (e.response.data.error);
-  }
-};
-
-export const updateDeck = (
-  token: string,
-  updatedDeck: Deck,
-) => async (dispatch: any): Promise<void> => {
-  try {
-    await deckService.update(token, updatedDeck);
-    dispatch(editDeck(updatedDeck));
-  } catch (e: any) {
-    console.log(e);
-    return (e.response.data.error);
-  }
-};
-
-export const deleteDeck = (
-  token: string,
-  deckToDelete: Deck,
-) => async (dispatch: any): Promise<void> => {
-  try {
-    await deckService.remove(token, deckToDelete);
-    dispatch(removeDeck(deckToDelete));
-  } catch (e: any) {
-    console.log(e);
-    return (e.response.data.error);
-  }
-};
-
-export const initializeDeck = (
-  token: string,
-) => async (dispatch: any): Promise<void> => {
-  try {
-    const response = await deckService.getAll(token);
-    dispatch(initDeck(response));
-  } catch (e: any) {
-    console.log(e);
-    return (e.response.data.error);
-  }
-};
-
-export const createCard = (
-  token: string,
-  newCard: NewCard,
-) => async (dispatch: any): Promise<void> => {
-  try {
-    const response = await cardService.create(token, newCard);
-    dispatch(addCard(response));
-  } catch (e: any) {
-    console.log(e);
-    return (e.response.data.error);
-  }
-};
-
-export const updateCard = (
-  token: string,
-  updatedValues: any,
-  cardId: any,
-) => async (dispatch: any): Promise<void> => {
-  try {
-    const updatedCard = await cardService.update(token, updatedValues, cardId);
-    dispatch(editCard(updatedCard));
-  } catch (e) {
-    console.log(e);
-  }
-};
-
-export const removeCard = (
-  token: string,
-  cardToDelete: Card,
-) => async (dispatch: any): Promise<void> => {
-  try {
-    await cardService.remove(token, cardToDelete);
-    dispatch(deleteCard(cardToDelete));
-  } catch (e: any) {
-    console.log(e);
-    return (e.response.data.error);
-  }
-};
+export const { setActive } = deckSlice.actions;
 
 export default deckSlice.reducer;

@@ -29,7 +29,7 @@ describe("App", () => {
   it("login fails with wrong password", function () {
     cy.contains("Log in").click();
     cy.get("input:first").type("ro11@root.com");
-    cy.get("input:last").type("rootPass123");
+    cy.get("input:last").type("wrongPassword");
     cy.contains("Login").click();
 
     cy.contains("Incorrect Login");
@@ -42,12 +42,12 @@ describe("App", () => {
 
     it("New Deck can be created", function () {
       cy.get("#nav_editor").click();
-      cy.contains("Create Deck").click();
+      cy.contains("New").click();
     });
 
     it("New Card can be created", function () {
       cy.get("#nav_editor").click();
-      cy.contains("Create Deck").click();
+      cy.contains("All").click();
       cy.contains("untitled").click();
 
       cy.contains("New Card").parent().within(() => {
@@ -83,7 +83,7 @@ describe("App", () => {
         cy.contains("Add Deck").click();
       });
       cy.get("#nav_editor").click();
-      cy.contains("All Cards").click();
+      cy.contains("All").click();
       cy.contains("Total Cards: 27");
     });
   });

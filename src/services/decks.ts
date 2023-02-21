@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Deck } from "../types";
 
-const getAll = async (token: string): Promise<void> => {
+const getAll = async (token: string): Promise<Deck[]> => {
   const config: any = {
     headers: { Authorization: `bearer ${token}` },
   };
@@ -9,7 +9,7 @@ const getAll = async (token: string): Promise<void> => {
   return response.data;
 };
 
-const create = async (token: string): Promise<void> => {
+const create = async (token: string): Promise<Deck> => {
   const config: any = {
     headers: { Authorization: `bearer ${token}` },
   };
@@ -17,7 +17,7 @@ const create = async (token: string): Promise<void> => {
   return response.data;
 };
 
-const update = async (token: string, updatedDeck: Deck): Promise<void> => {
+const update = async (token: string, updatedDeck: Deck): Promise<Deck> => {
   const config: any = {
     headers: { Authorization: `bearer ${token}` },
   };

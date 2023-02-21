@@ -5,7 +5,6 @@ import { NavLink } from "react-router-dom";
 
 import { Tooltip, ActionIcon } from "@mantine/core";
 import { useClickOutside } from "@mantine/hooks";
-import { setActive } from "../../reducers/deckReducer";
 import { useAppDispatch } from "../../hooks/hooks";
 
 import { Container } from "./styles";
@@ -19,6 +18,8 @@ import { ReactComponent as NavIconProfile } from "../../assets/navIconProfile.sv
 import { ReactComponent as NavIconExit } from "../../assets/navIconExit.svg";
 import { ReactComponent as ChevronLeft } from "../../assets/chevronLeft.svg";
 import { ReactComponent as ChevronRight } from "../../assets/chevronRight.svg";
+import { clearUser } from "../../reducers/usersReducer";
+import { setActive } from "../../reducers/deckReducer";
 
 const NavBar = forwardRef((props, refs): ReactElement => {
   const dispatch = useAppDispatch();
@@ -35,8 +36,8 @@ const NavBar = forwardRef((props, refs): ReactElement => {
   }));
 
   const handleLogout = (): void => {
-    dispatch(setActive({ title: "", cards: [] }));
-    window.localStorage.removeItem("currentUser");
+    dispatch(setActive({ title: "", cards: [] } as any));
+    dispatch(clearUser());
   };
 
   return (

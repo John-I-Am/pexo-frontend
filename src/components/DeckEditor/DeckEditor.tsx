@@ -39,7 +39,7 @@ const DeckEditor = (): ReactElement => {
   } = useForm<FormValues>();
 
   const handleChangeTitle = (data: {title: string}): void => {
-    dispatch(updateDeck(token, { ...activeDeck, title: data.title } as any));
+    dispatch(updateDeck({ token, updatedDeck: { ...activeDeck, title: data.title } }));
     setOpened2(false);
   };
 
@@ -53,7 +53,8 @@ const DeckEditor = (): ReactElement => {
       ),
       labels: { confirm: "Confirm", cancel: "Cancel" },
       onCancel: () => console.log("Cancel"),
-      onConfirm: () => dispatch(deleteDeck(token, activeDeck as any)),
+      // eslint-disable-next-line max-len
+      onConfirm: () => dispatch(deleteDeck({ token, deckToDelete: activeDeck })),
     });
   };
 

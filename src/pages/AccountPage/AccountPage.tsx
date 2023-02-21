@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-props-no-spreading */
 import { ReactElement } from "react";
 import { useForm } from "react-hook-form";
@@ -40,38 +41,39 @@ const AccountPage = (): ReactElement => {
       email: data.email || currentUser.email,
     };
 
-    const response = await dispatch(updateUser(
-      currentUser.token,
-      currentUser.info.id,
+    await dispatch(updateUser({
+      token: currentUser.token,
+      userId: currentUser.info.id,
       updatedUser,
-    ));
+    }));
 
-    if (response === "email not unique") {
-      setErrorInfo("email", {
-        type: "manual",
-        message: "email unavailable",
-      });
-    } else {
-      showNotification({
-        title: "Details changed",
-        message: "Successfully changed personal info",
-      });
-    }
+    // if (response === "email not unique") {
+    //   setErrorInfo("email", {
+    //     type: "manual",
+    //     message: "email unavailable",
+    //   });
+    // } else {
+    //   showNotification({
+    //     title: "Details changed",
+    //     message: "Successfully changed personal info",
+    //   });
+    // }
   };
 
   const handleUpdatePassword = async (data: any): Promise<void> => {
-    const response = await dispatch(updateUser(currentUser.token, currentUser.info.id, data));
-    if (response === "invalid token") {
-      setErrorPassword("currentPassword", {
-        type: "manual",
-        message: "Wrong password",
-      });
-    } else {
-      showNotification({
-        title: "Details changed",
-        message: "Successfully changed passwords",
-      });
-    }
+    // eslint-disable-next-line max-len
+    await dispatch(updateUser({ token: currentUser.token, userId: currentUser.info.id, updatedUser: data }));
+    // if (response === "invalid token") {
+    //   setErrorPassword("currentPassword", {
+    //     type: "manual",
+    //     message: "Wrong password",
+    //   });
+    // } else {
+    //   showNotification({
+    //     title: "Details changed",
+    //     message: "Successfully changed passwords",
+    //   });
+    // }
   };
 
   return (

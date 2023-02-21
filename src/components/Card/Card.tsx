@@ -20,22 +20,32 @@ const Card = ({ cardToStudy, showNotes }: any): ReactElement => {
 
   const { register, handleSubmit, setValue } = useForm();
 
+  // TODO messy function clean up asap
   const handleIncorrect = async () => {
-    dispatch(updateCard(token, {
-      ...cardToStudy,
-      level: cardToStudy.level === 0
-        ? 0
-        : cardToStudy.level - 1,
-    }, cardToStudy.id));
+    dispatch(updateCard({
+      token,
+      updatedValues: {
+        ...cardToStudy,
+        level: cardToStudy.level === 0
+          ? 0
+          : cardToStudy.level - 1,
+      },
+      cardId: cardToStudy.id,
+    } as any));
   };
 
+  // TODO messy function clean up asap
   const handleCorrect = async () => {
-    dispatch(updateCard(token, {
-      ...cardToStudy,
-      level: cardToStudy.level === 5
-        ? 5
-        : cardToStudy.level + 1,
-    }, cardToStudy.id));
+    dispatch(updateCard({
+      token,
+      updatedValues: {
+        ...cardToStudy,
+        level: cardToStudy.level === 5
+          ? 5
+          : cardToStudy.level + 1,
+      },
+      cardId: cardToStudy.id,
+    } as any));
   };
 
   const handleGuess = (data: any) => {

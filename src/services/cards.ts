@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Card, NewCard } from "../types";
 
-const getAll = async (token: string): Promise<void> => {
+const getAll = async (token: string): Promise<Card[]> => {
   const config: any = {
     headers: { Authorization: `bearer ${token}` },
   };
@@ -9,7 +9,7 @@ const getAll = async (token: string): Promise<void> => {
   return response.data;
 };
 
-const create = async (token: string, newCard: NewCard): Promise<void> => {
+const create = async (token: string, newCard: NewCard): Promise<Card> => {
   const config: any = {
     headers: { Authorization: `bearer ${token}` },
   };
@@ -17,7 +17,7 @@ const create = async (token: string, newCard: NewCard): Promise<void> => {
   return response.data;
 };
 
-const update = async (token: string, updatedValues: any, cardId: any): Promise<void> => {
+const update = async (token: string, updatedValues: any, cardId: any): Promise<Card> => {
   const config: any = {
     headers: { Authorization: `bearer ${token}` },
   };

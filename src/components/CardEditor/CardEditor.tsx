@@ -97,13 +97,13 @@ const CardEditor = ({ card }: Prop): ReactElement => {
         examples,
       };
 
-      await dispatch(updateCard(token, updatedCard, card.id));
+      await dispatch(updateCard({ token, updatedValues: updatedCard, cardId: card.id } as any));
       showNotification({
         title: "Card updated",
         message: "Successfully changed card",
       });
     } else {
-      dispatch(createCard(token, newCard));
+      dispatch(createCard({ token, newCard } as any));
       setExamples([]);
       setTags([]);
       setValueCard("front", "");

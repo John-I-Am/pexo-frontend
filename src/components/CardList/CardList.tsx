@@ -42,7 +42,7 @@ const CardList = ({ cards, viewOnly }: any): ReactElement => {
       ),
       labels: { confirm: "Confirm", cancel: "Cancel" },
       onCancel: () => console.log("Cancel"),
-      onConfirm: () => dispatch(removeCard(token, card)),
+      onConfirm: () => dispatch(removeCard({ token, card } as any)),
     });
   };
 

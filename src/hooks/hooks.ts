@@ -1,12 +1,12 @@
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import type { RootState, AppDispatch } from "../store";
-import { Card, Deck, CombinedDeck } from "../types";
+import { Card, Deck } from "../types";
 
 // Use throughout your app instead of plain `useDispatch` and `useSelector`
 export const useAppDispatch: () => AppDispatch = useDispatch;
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
-export const useCombinedDeck = (decks: Deck[]): CombinedDeck => {
+export const useCombinedDeck = (decks: Deck[]): any => {
   let allCards: Card[] = [];
   decks.forEach((deck: Deck) => {
     if (deck.cards) {

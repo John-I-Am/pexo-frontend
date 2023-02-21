@@ -1,8 +1,42 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable consistent-return */
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import userService from "../services/users";
 import { NewUser, UserCredentials } from "../types";
+
+type SliceStatus = "idle" | "loading" | "succeeded" | "failed"
+
+interface UserState {
+  token: string;
+  id: string;
+  info: {
+    name: string,
+    surname: string,
+    email: string,
+  };
+  status: SliceStatus;
+}
+
+export const updateUser = createAsyncThunk("users/updateUser", async ({ token, userId, updatedUser }: {token: string, userId: string, updatedUser: any}): Promise<any> => {
+  const response = await userService.update(token, userId, updatedUser);
+  return response;
+});
+
+export const fetchUser = createAsyncThunk("users/fetchUser", async ({ token, id }: {token: string, id: string}): Promise<any> => {
+  const response = await userService.fetch(token, id);
+  return response;
+});
+
+export const registerUser = createAsyncThunk("users/registerUser", async (newUser: NewUser): Promise<any> => {
+  const response = await userService.register(newUser);
+  return response;
+});
+
+export const loginUser = createAsyncThunk("users/loginUser", async (credentials: UserCredentials): Promise<any> => {
+  const response = await userService.login(credentials);
+  window.localStorage.setItem("currentUser", JSON.stringify(response));
+  return response;
+});
 
 const userSlice = createSlice({
   name: "users",
@@ -14,73 +48,35 @@ const userSlice = createSlice({
       surname: "",
       email: "",
     },
-  },
+  } as UserState,
   reducers: {
-    setUser(state, action) {
+    setUser(state: UserState, action: PayloadAction<any>) {
       state.token = action.payload.token;
-      state.id = action.payload.id;
-    },
-    setUserInfo(state, action) {
-      state.info = action.payload;
+      state.id = action.payload.userId;
     },
     clearUser() {
       window.localStorage.clear();
     },
   },
+  extraReducers(builder) {
+    builder
+      .addCase(loginUser.fulfilled, (state: UserState, action: any) => {
+        state.token = action.payload.token;
+        state.id = action.payload.id;
+        state.info = action.payload;
+      })
+      .addCase(loginUser.rejected, (state: UserState) => {
+        state.status = "failed";
+      })
+      .addCase(fetchUser.fulfilled, (state: UserState, action: any) => {
+        state.info = action.payload;
+      })
+      .addCase(updateUser.fulfilled, (state: UserState, action: any) => {
+        state.info = action.payload;
+      });
+  },
 });
 
-export const { setUser, setUserInfo, clearUser } = userSlice.actions;
-
-export const registerUser = (
-  newUser: NewUser,
-) => async (): Promise<void> => {
-  try {
-    await userService.register(newUser);
-  } catch (e: any) {
-    console.log(e);
-    return (e.response.data.error);
-  }
-};
-
-export const fetchUser = (
-  token: string,
-  id: string,
-) => async (dispatch: any): Promise<any> => {
-  try {
-    const response = await userService.fetch(token, id);
-    dispatch(setUserInfo(response));
-  } catch (e: any) {
-    console.log(e);
-    return (e.response.data.error);
-  }
-};
-
-export const loginUser = (
-  credentials: UserCredentials,
-) => async (dispatch: any): Promise<any> => {
-  try {
-    const response = await userService.login(credentials);
-    window.localStorage.setItem("currentUser", JSON.stringify(response));
-    dispatch(setUser(response));
-    dispatch(fetchUser(response.token, response.userId));
-  } catch (e: any) {
-    console.log(e);
-    return (e.response.data.error);
-  }
-};
-
-export const updateUser = (
-  token: any,
-  userId: string,
-  updatedUser: any,
-) => async (dispatch: any): Promise<any> => {
-  try {
-    const response = await userService.update(token, userId, updatedUser);
-    dispatch(setUserInfo(response));
-  } catch (e: any) {
-    console.log(e);
-    return (e.response.data.error);
-  }
-};
+export const { setUser, clearUser } = userSlice.actions;
 
 export default userSlice.reducer;

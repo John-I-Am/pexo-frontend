@@ -5,7 +5,7 @@ import {
 
 import { ActionIcon } from "@mantine/core";
 import { fetchUser, setUser } from "../../reducers/usersReducer";
-import { initializeDeck } from "../../reducers/deckReducer";
+import { fetchDecks } from "../../reducers/deckReducer";
 import { useAppDispatch } from "../../hooks/hooks";
 
 import NavBar from "../../components/NavBar/NavBar";
@@ -28,8 +28,9 @@ const MainPage = (): ReactElement => {
     if (currentUser) {
       currentUserParsed = JSON.parse(currentUser);
       dispatch(setUser(currentUserParsed));
-      dispatch(fetchUser(currentUserParsed?.token as string, currentUserParsed?.userId as string));
-      dispatch(initializeDeck(currentUserParsed?.token as string));
+      // eslint-disable-next-line max-len
+      dispatch(fetchUser({ token: currentUserParsed?.token as string, id: currentUserParsed?.userId as string } as any));
+      dispatch(fetchDecks(currentUserParsed?.token as string));
     } else {
       alert("Session expired or user not found");
     }

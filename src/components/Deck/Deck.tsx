@@ -16,9 +16,9 @@ const Deck = ({ cards }: any) => {
 
   const handleAddDeck = async () => {
     const deck: any = await dispatch(createDeck(token));
-    cards.cards.forEach((card: any) => {
-      card.deckId = deck.id;
-      dispatch(createCard(token, card));
+    cards.cards.forEach((newCard: any) => {
+      newCard.deckId = deck.payload.id;
+      dispatch(createCard({ token, newCard } as any));
     });
     showNotification({
       title: "Deck Added",
