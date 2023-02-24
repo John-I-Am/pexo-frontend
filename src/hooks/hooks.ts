@@ -18,7 +18,7 @@ export const useCombinedDeck = (decks: Deck[]): any => {
 };
 
 export const useCardsDue = (cards: Card[]): Card[] => {
-  const cardsDue = cards.filter((card: any) => (
+  const cardsDue = cards?.filter((card: any) => (
     new Date(card.checkpointDate)).getTime() <= new Date().getTime());
 
   return cardsDue;

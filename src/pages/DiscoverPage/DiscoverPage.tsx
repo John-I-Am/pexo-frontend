@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-props-no-spreading */
 import { ReactElement, useState } from "react";
-import Deck from "../../components/Deck/Deck";
+import Deck from "../../features/decks/Deck/Deck";
 import { useAppDispatch } from "../../hooks/hooks";
 import { SearchBar } from "../../sharedStyles";
 import { alphabetCards, monthCards } from "../../utils/demoCards";

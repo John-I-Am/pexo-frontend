@@ -1,6 +1,6 @@
 import { ReactElement, useEffect } from "react";
 import { useAppDispatch } from "../../hooks/hooks";
-import { setUser } from "../../reducers/usersReducer";
+import { setUser } from "../../features/users/usersSlice";
 import { Container } from "./styles";
 
 const DashboardPage = (): ReactElement => {

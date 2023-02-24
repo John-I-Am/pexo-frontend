@@ -1,18 +1,28 @@
 import { ReactElement } from "react";
-
-import CardList from "../../components/CardList/CardList";
-import DeckEditor from "../../components/DeckEditor/DeckEditor";
-import DeckList from "../../components/DeckList/DeckList";
-import { useAppSelector } from "../../hooks/hooks";
+import { useGetDecksQuery } from "../../features/api/apiSlice";
+import CardList from "../../features/decks/CardList/CardList";
+import DeckEditor from "../../features/decks/DeckEditor/DeckEditor";
+import DeckList from "../../features/decks/DeckList/DeckList";
+import { useAppSelector, useCombinedDeck } from "../../hooks/hooks";
+import { RootState } from "../../store";
+import { Deck } from "../../types";
 import { Container } from "./styles";
 
 const DeckEditorPage = (): ReactElement => {
-  const cards = useAppSelector((state: any) => state.decks.activeDeck.cards);
+  const { data: decks = [] } = useGetDecksQuery();
+  let activeDeck: any;
+  const activeDeckId = useAppSelector((state: RootState) => state.decks.activeDeckId);
+  if (activeDeckId === null) {
+    activeDeck = useCombinedDeck(decks);
+  } else {
+    activeDeck = decks.find((deck: Deck) => deck.id === activeDeckId);
+  }
+
   return (
     <Container>
       <DeckList noCreate={false} />
       <DeckEditor />
-      <CardList cards={cards} />
+      <CardList cards={activeDeck?.cards ?? []} />
     </Container>
   );
 };

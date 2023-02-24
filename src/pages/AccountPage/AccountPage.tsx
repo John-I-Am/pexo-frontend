@@ -1,13 +1,12 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-props-no-spreading */
 import { ReactElement } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
-import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
+import { useAppSelector } from "../../hooks/hooks";
 import { Container } from "./styles";
 import { Error } from "../../sharedStyles";
-import { updateUser } from "../../reducers/usersReducer";
+import { useGetUserQuery, useUpdateUserMutation } from "../../features/api/apiSlice";
 
 type FormValues = {
   name: string,
@@ -16,8 +15,10 @@ type FormValues = {
 }
 
 const AccountPage = (): ReactElement => {
-  const dispatch = useAppDispatch();
-  const currentUser = useAppSelector((state: any) => state.user);
+  const userId = useAppSelector((state: any) => state.user.id);
+  const { data: currentUser = {}, isSuccess } = useGetUserQuery(userId);
+
+  const [updateUser, { isSuccess: isSuccessUpdate }] = useUpdateUserMutation();
 
   const {
     register: registerInfo,
@@ -41,39 +42,33 @@ const AccountPage = (): ReactElement => {
       email: data.email || currentUser.email,
     };
 
-    await dispatch(updateUser({
-      token: currentUser.token,
-      userId: currentUser.info.id,
-      updatedUser,
-    }));
-
-    // if (response === "email not unique") {
-    //   setErrorInfo("email", {
-    //     type: "manual",
-    //     message: "email unavailable",
-    //   });
-    // } else {
-    //   showNotification({
-    //     title: "Details changed",
-    //     message: "Successfully changed personal info",
-    //   });
-    // }
+    await updateUser({ ...currentUser, ...updatedUser });
+    if (!isSuccessUpdate) {
+      setErrorInfo("email", {
+        type: "manual",
+        message: "email unavailable",
+      });
+    } else {
+      showNotification({
+        title: "Details changed",
+        message: "Successfully changed personal info",
+      });
+    }
   };
 
   const handleUpdatePassword = async (data: any): Promise<void> => {
-    // eslint-disable-next-line max-len
-    await dispatch(updateUser({ token: currentUser.token, userId: currentUser.info.id, updatedUser: data }));
-    // if (response === "invalid token") {
-    //   setErrorPassword("currentPassword", {
-    //     type: "manual",
-    //     message: "Wrong password",
-    //   });
-    // } else {
-    //   showNotification({
-    //     title: "Details changed",
-    //     message: "Successfully changed passwords",
-    //   });
-    // }
+    await updateUser({ ...currentUser, ...data });
+    if (!isSuccess) {
+      setErrorPassword("currentPassword", {
+        type: "manual",
+        message: "Wrong password",
+      });
+    } else {
+      showNotification({
+        title: "Details changed",
+        message: "Successfully changed passwords",
+      });
+    }
   };
 
   return (
@@ -89,7 +84,7 @@ const AccountPage = (): ReactElement => {
             <label htmlFor="name">
               Name
               <input
-                defaultValue={currentUser.info.name}
+                defaultValue={currentUser.name}
                 {...registerInfo("name", {
                   pattern: {
                     value: /^[A-Z]{2,}$/i,
@@ -102,7 +97,7 @@ const AccountPage = (): ReactElement => {
             <label htmlFor="surname">
               Surname
               <input
-                defaultValue={currentUser.info.surname}
+                defaultValue={currentUser.surname}
                 {...registerInfo("surname", {
                   pattern: {
                     value: /[A-Z]{2,}$/i,
@@ -115,7 +110,7 @@ const AccountPage = (): ReactElement => {
             <label htmlFor="email">
               Email Address
               <input
-                defaultValue={currentUser.info.email}
+                defaultValue={currentUser.email}
                 {...registerInfo("email", {
                   pattern: {
                     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,

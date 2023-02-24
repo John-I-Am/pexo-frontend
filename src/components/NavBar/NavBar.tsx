@@ -18,8 +18,8 @@ import { ReactComponent as NavIconProfile } from "../../assets/navIconProfile.sv
 import { ReactComponent as NavIconExit } from "../../assets/navIconExit.svg";
 import { ReactComponent as ChevronLeft } from "../../assets/chevronLeft.svg";
 import { ReactComponent as ChevronRight } from "../../assets/chevronRight.svg";
-import { clearUser } from "../../reducers/usersReducer";
-import { setActive } from "../../reducers/deckReducer";
+import { clearUser } from "../../features/users/usersSlice";
+import { apiSlice } from "../../features/api/apiSlice";
 
 const NavBar = forwardRef((props, refs): ReactElement => {
   const dispatch = useAppDispatch();
@@ -36,8 +36,8 @@ const NavBar = forwardRef((props, refs): ReactElement => {
   }));
 
   const handleLogout = (): void => {
-    dispatch(setActive({ title: "", cards: [] } as any));
     dispatch(clearUser());
+    dispatch(apiSlice.util.resetApiState());
   };
 
   return (
