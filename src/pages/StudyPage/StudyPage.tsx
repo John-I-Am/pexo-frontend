@@ -1,14 +1,12 @@
 import { ReactElement, useState } from "react";
-import { useAppSelector, useCardsDue, useCombinedDeck } from "../../hooks/hooks";
+import { useActiveDeck, useCardsDue } from "../../hooks/hooks";
 import CardComponent from "../../features/decks/Card/Card";
 import DeckList from "../../features/decks/DeckList/DeckList";
 
 import { Container, NoCards } from "./styles";
 import done from "../../assets/done.svg";
-import { Card, Deck } from "../../types";
+import { Card } from "../../types";
 import CardNote from "../../features/decks/CardNote/CardNote";
-import { useGetDecksQuery } from "../../features/api/apiSlice";
-import { RootState } from "../../store";
 
 const Cardless = (): ReactElement => (
   <NoCards>
@@ -21,17 +19,8 @@ const Cardless = (): ReactElement => (
 );
 
 const StudyPage = (): ReactElement => {
-  const { data: allDecks = [] } = useGetDecksQuery();
-  let activeDeck: any;
-  const activeDeckId = useAppSelector((state: RootState) => state.decks.activeDeckId);
-  if (activeDeckId === null) {
-    activeDeck = useCombinedDeck(allDecks);
-  } else {
-    activeDeck = allDecks.find((deck: Deck) => deck.id === activeDeckId);
-  }
-
+  const activeDeck = useActiveDeck();
   const cardsToStudy: Card[] = useCardsDue(activeDeck?.cards ?? []);
-
   const [answerChecked, setAnswerChecked] = useState(false);
 
   return (

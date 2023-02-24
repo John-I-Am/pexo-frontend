@@ -1,4 +1,5 @@
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
+import { useGetDecksQuery } from "../features/api/apiSlice";
 import type { RootState, AppDispatch } from "../store";
 import { Card, Deck } from "../types";
 
@@ -14,7 +15,22 @@ export const useCombinedDeck = (decks: Deck[]): any => {
     }
   });
 
-  return { title: "", cards: allCards };
+  return { cards: allCards };
+};
+
+export const useActiveDeck = (): Deck => {
+  let activeDeck: Deck;
+
+  const { data: allDecks = [] } = useGetDecksQuery();
+  const deckId: number | null = useAppSelector((state: RootState) => state.decks.activeDeckId);
+
+  if (deckId === null) {
+    activeDeck = useCombinedDeck(allDecks);
+  } else {
+    activeDeck = allDecks.find((deck: Deck) => deck.id === deckId);
+  }
+
+  return activeDeck;
 };
 
 export const useCardsDue = (cards: Card[]): Card[] => {
