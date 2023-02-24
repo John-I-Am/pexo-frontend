@@ -1,26 +1,32 @@
 /* eslint-disable no-param-reassign */
-import { createSlice } from "@reduxjs/toolkit";
-
-type SliceStatus = "idle" | "loading" | "succeeded" | "failed"
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface DeckState {
   activeDeckId: number | null;
-  status: SliceStatus;
+  tags: string[],
 }
 
 const deckSlice = createSlice({
   name: "decks",
   initialState: {
     activeDeckId: null,
-    status: "idle" as SliceStatus,
+    tags: [] as string[],
   } as DeckState,
   reducers: {
-    setActive(state: DeckState, action: any) {
+    setActive(state: DeckState, action: PayloadAction<number | null>) {
       state.activeDeckId = action.payload;
+      state.tags = [];
+    },
+    addTag(state: DeckState, action: PayloadAction<string>) {
+      if (!state.tags.includes(action.payload)) {
+        state.tags.push(action.payload);
+      } else {
+        state.tags = state.tags.filter((tag: string) => tag !== action.payload);
+      }
     },
   },
 });
 
-export const { setActive } = deckSlice.actions;
+export const { setActive, addTag } = deckSlice.actions;
 
 export default deckSlice.reducer;

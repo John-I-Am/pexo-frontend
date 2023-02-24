@@ -23,6 +23,7 @@ export const useActiveDeck = (): Deck => {
 
   const { data: allDecks = [] } = useGetDecksQuery();
   const deckId: number | null = useAppSelector((state: RootState) => state.decks.activeDeckId);
+  const tags: string[] = useAppSelector((state: RootState) => state.decks.tags);
 
   if (deckId === null) {
     activeDeck = useCombinedDeck(allDecks);
@@ -30,7 +31,18 @@ export const useActiveDeck = (): Deck => {
     activeDeck = allDecks.find((deck: Deck) => deck.id === deckId);
   }
 
-  return activeDeck;
+  let filteredCards;
+
+  if (tags.length > 0) {
+    // this line returns every card that has all the tags in tags array. Bit messy, refactor?
+    // eslint-disable-next-line max-len
+    filteredCards = activeDeck.cards?.filter((card: any) => tags.every((tag: any) => card.tags.includes(tag)));
+  } else {
+    filteredCards = activeDeck?.cards ?? [];
+  }
+
+  const filteredActiveDeck = { ...activeDeck, cards: filteredCards };
+  return filteredActiveDeck;
 };
 
 export const useCardsDue = (cards: Card[]): Card[] => {
@@ -43,11 +55,14 @@ export const useCardsDue = (cards: Card[]): Card[] => {
 export const useTagSelector = (decks: Deck[]): any => {
   let tags: string[] = [];
   decks.forEach((deck: Deck) => {
-    deck.cards?.forEach((card: any) => {
-      if (card.tags) {
-        tags = tags.concat(card.tags);
-      }
-    });
+    if (deck?.cards) {
+      deck.cards.forEach((card: any) => {
+        if (card.tags) {
+          tags = tags.concat(card.tags);
+        }
+      });
+    }
   });
+
   return Array.from(new Set(tags));
 };

@@ -6,12 +6,13 @@ import {
 } from "./styles";
 
 import {
-  useAppDispatch, useTagSelector,
+  useAppDispatch, useAppSelector, useTagSelector,
 } from "../../../hooks/hooks";
-import { setActive } from "../decksSlice";
+import { addTag, setActive } from "../decksSlice";
 import { useAddNewDeckMutation, useGetDecksQuery } from "../../api/apiSlice";
 import { Deck } from "../../../types";
 import { SearchBar } from "../../../sharedStyles";
+import { RootState } from "../../../store";
 
 type DeckListProps = {
   noCreate: boolean;
@@ -22,6 +23,11 @@ const DeckList = ({ noCreate }: DeckListProps): ReactElement => {
   const dispatch = useAppDispatch();
   const [addNewDeck] = useAddNewDeckMutation();
   const { data: decks = [] } = useGetDecksQuery();
+  const activeTags: string[] = useAppSelector((state: RootState) => state.decks.tags);
+  const activeDeckId: number | null = useAppSelector((state: any) => state.decks.activeDeckId);
+  const activeDeckUnfiltered: Deck[] = activeDeckId === null
+    ? decks
+    : [decks.find((deck: Deck) => deck.id === activeDeckId)];
 
   const decksToShow: Deck[] = filter === ""
     ? decks
@@ -33,7 +39,7 @@ const DeckList = ({ noCreate }: DeckListProps): ReactElement => {
         <form onChange={({ target }) => setFilter((target as HTMLInputElement).value)}>
           <SearchBar placeholder="Search" />
         </form>
-        <Button onClick={() => dispatch(setActive(null as any))}> All</Button>
+        <Button onClick={() => dispatch(setActive(null))}> All</Button>
         <Button onClick={() => addNewDeck()}> New </Button>
         <div>
           {decksToShow.map((deck: any) => (
@@ -45,8 +51,8 @@ const DeckList = ({ noCreate }: DeckListProps): ReactElement => {
       </DeckSelector>
 
       <Tags>
-        {useTagSelector(decks).map((tag: string) => (
-          <Badge key={tag} onClick={() => console.log(tag)}>
+        {useTagSelector(activeDeckUnfiltered).map((tag: string) => (
+          <Badge variant={activeTags.includes(tag) ? "filled" : "outline"} key={tag} onClick={() => dispatch(addTag(tag))}>
             {tag}
           </Badge>
         ))}
